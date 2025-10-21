@@ -1,0 +1,40 @@
+version: '3.8'
+
+# This is a starter template. Modify and extend based on your implementation.
+# The code below is just for example, we expect you to modify it.
+
+services:
+  # PostgreSQL Database or other database
+  postgres:
+    image: postgres:15-alpine
+    container_name: dakota_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-energy_analytics}
+      POSTGRES_USER: ${POSTGRES_USER:-dakota_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - dakota_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dakota_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Add your services here:
+  # - FastAPI service
+  # - Orchestrator
+  # - dbt
+  # - Jupyter (optional for notebooks)
+  # etc.
+
+networks:
+  dakota_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
